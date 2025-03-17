@@ -1,12 +1,7 @@
 package main
 
-import (
-	"fmt"
-	"mathparse/lexer"
-)
+import "fmt"
 
 func main() {
-	l := lexer.New("2 + 2")
-	tokens := l.Tokenize()
-	fmt.Printf("tokens=%v\n", tokens)
+	fmt.Println("It works!")
 }
