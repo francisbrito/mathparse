@@ -45,8 +45,7 @@ func (l *Lexer) NextToken() token.Token {
 	default:
 		// tokenize integer
 		if unicode.IsDigit(l.ch) {
-			literal = l.tokenizeInteger()
-			tokenType = token.Integer
+			literal, tokenType = l.tokenizeNumber()
 		} else {
 			// any other token is considered illegal
 			literal = l.input[l.pos:]
@@ -71,12 +70,22 @@ func (l *Lexer) skipWhitespace() {
 	}
 }
 
-func (l *Lexer) tokenizeInteger() string {
+func (l *Lexer) tokenizeNumber() (string, token.Type) {
+	var isFloat bool
+	tokenType := token.Integer
 	start := l.pos
-	for unicode.IsDigit(l.ch) {
+	for unicode.IsDigit(l.ch) || l.ch == '.' {
+		if l.ch == '.' {
+			if isFloat {
+				tokenType = token.Illegal
+			} else {
+				isFloat = true
+				tokenType = token.Float
+			}
+		}
 		l.readChar()
 	}
-	return l.input[start:l.pos]
+	return l.input[start:l.pos], token.Type(tokenType)
 }
 
 func newToken(tokenType token.Type, literal string) token.Token {

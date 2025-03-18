@@ -10,6 +10,7 @@ type Token struct {
 const (
 	Caret       Type = "CARET"
 	EndOfFile        = "EOF"
+	Float            = "FLOAT"
 	Illegal          = "ILLEGAL"
 	Integer          = "INTEGER"
 	MinusSign        = "MINUS_SIGN"

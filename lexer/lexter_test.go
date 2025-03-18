@@ -52,13 +52,16 @@ func TestLexer_NextToken(t *testing.T) {
 	testCases := []*testCase{
 		// can process empty input
 		newTestCase("", token.Token{Type: token.EndOfFile}),
-		// can tokenize illegal tokens
+		// can process illegal input
 		newTestCase("ILLEGAL", token.Token{Type: token.Illegal, Literal: "ILLEGAL"}),
 		// can skip whitespace
 		newTestCase(" ", token.Token{Type: token.EndOfFile}),
 		newTestCase("		", token.Token{Type: token.EndOfFile}),
 		// can tokenize integers
 		newTestCase("1234567890", token.Token{Type: token.Integer, Literal: "1234567890"}),
+		// can tokenize floating point numbers
+		newTestCase("1.2", token.Token{Type: token.Float, Literal: "1.2"}),
+		newTestCase("1.2.3", token.Token{Type: token.Illegal, Literal: "1.2.3"}),
 	}
 	// can tokenize every digit
 	for _, digitToken := range digitTokens {
