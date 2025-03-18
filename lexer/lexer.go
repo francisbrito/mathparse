@@ -24,6 +24,24 @@ func (l *Lexer) NextToken() token.Token {
 	case 0:
 		literal = ""
 		tokenType = token.EndOfFile
+	case '+':
+		literal = "+"
+		tokenType = token.PlusSign
+	case '-':
+		literal = "-"
+		tokenType = token.MinusSign
+	case '*':
+		literal = "*"
+		tokenType = token.Asterisk
+	case '/':
+		literal = "/"
+		tokenType = token.Slash
+	case '%':
+		literal = "%"
+		tokenType = token.PercentSign
+	case '^':
+		literal = "^"
+		tokenType = token.Caret
 	default:
 		// tokenize integer
 		if unicode.IsDigit(l.ch) {

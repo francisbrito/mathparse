@@ -8,7 +8,13 @@ type Token struct {
 }
 
 const (
-	EndOfFile Type = "EOF"
-	Illegal        = "ILLEGAL"
-	Integer        = "INTEGER"
+	Caret       Type = "CARET"
+	EndOfFile        = "EOF"
+	Illegal          = "ILLEGAL"
+	Integer          = "INTEGER"
+	MinusSign        = "MINUS_SIGN"
+	PercentSign      = "PERCENT_SIGN"
+	PlusSign         = "PLUS_SIGN"
+	Asterisk         = "ASTERISK"
+	Slash            = "SLASH"
 )
