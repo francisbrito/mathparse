@@ -12,13 +12,14 @@ type Lexer struct {
 }
 
 func New(input string) *Lexer {
-	return &Lexer{input: input, pos: -1}
+	l := &Lexer{input: input, pos: -1}
+	l.readChar()
+	return l
 }
 
 func (l *Lexer) NextToken() token.Token {
 	var literal string
 	var tokenType token.Type
-	l.readChar()
 	l.skipWhitespace()
 	switch l.ch {
 	case 0:
@@ -27,27 +28,35 @@ func (l *Lexer) NextToken() token.Token {
 	case '+':
 		literal = "+"
 		tokenType = token.PlusSign
+		l.readChar()
 	case '-':
 		literal = "-"
 		tokenType = token.MinusSign
+		l.readChar()
 	case '*':
 		literal = "*"
 		tokenType = token.Asterisk
+		l.readChar()
 	case '/':
 		literal = "/"
 		tokenType = token.Slash
+		l.readChar()
 	case '%':
 		literal = "%"
 		tokenType = token.PercentSign
+		l.readChar()
 	case '^':
 		literal = "^"
 		tokenType = token.Caret
+		l.readChar()
 	case '(':
 		literal = "("
 		tokenType = token.OpeningParentheses
+		l.readChar()
 	case ')':
 		literal = ")"
 		tokenType = token.ClosingParentheses
+		l.readChar()
 	default:
 		// tokenize integer
 		if unicode.IsDigit(l.ch) {

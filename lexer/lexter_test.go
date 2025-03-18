@@ -7,6 +7,11 @@ import (
 	"testing"
 )
 
+type testCase struct {
+	input    string
+	expected []token.Token
+}
+
 var digitTokens []token.Token
 var arithmeticOpTokens []token.Token
 
@@ -38,11 +43,6 @@ func init() {
 	}
 }
 
-type testCase struct {
-	input    string
-	expected []token.Token
-}
-
 func newTestCase(input string, tokens ...token.Token) *testCase {
 	return &testCase{input: input, expected: tokens}
 }
@@ -65,6 +65,8 @@ func TestLexer_NextToken(t *testing.T) {
 		// can tokenize parentheses
 		newTestCase("(", token.Token{Type: token.OpeningParentheses, Literal: "("}),
 		newTestCase(")", token.Token{Type: token.ClosingParentheses, Literal: ")"}),
+		// can tokenize a complex expressions
+		newComplexTestCase(),
 	}
 	// can tokenize every digit
 	for _, digitToken := range digitTokens {
@@ -78,9 +80,74 @@ func TestLexer_NextToken(t *testing.T) {
 		lexer = New(tc.input)
 		for _, expectedToken := range tc.expected {
 			actualToken := lexer.NextToken()
-			if !assert.Equal(t, expectedToken, actualToken) {
+			if !assert.Equal(t, expectedToken, actualToken, "input: %q", tc.input) {
 				t.Fatal()
 			}
 		}
 	}
+}
+
+func newComplexTestCase() *testCase {
+	return newTestCase("1 + 2 - 3 * 4 / 5 ^ (6 % 7)",
+		token.Token{
+			Type:    token.Integer,
+			Literal: "1",
+		},
+		token.Token{
+			Type:    token.PlusSign,
+			Literal: "+",
+		},
+		token.Token{
+			Type:    token.Integer,
+			Literal: "2",
+		},
+		token.Token{
+			Type:    token.MinusSign,
+			Literal: "-",
+		},
+		token.Token{
+			Type:    token.Integer,
+			Literal: "3",
+		},
+		token.Token{
+			Type:    token.Asterisk,
+			Literal: "*",
+		},
+		token.Token{
+			Type:    token.Integer,
+			Literal: "4",
+		},
+		token.Token{
+			Type:    token.Slash,
+			Literal: "/",
+		},
+		token.Token{
+			Type:    token.Integer,
+			Literal: "5",
+		},
+		token.Token{
+			Type:    token.Caret,
+			Literal: "^",
+		},
+		token.Token{
+			Type:    token.OpeningParentheses,
+			Literal: "(",
+		},
+		token.Token{
+			Type:    token.Integer,
+			Literal: "6",
+		},
+		token.Token{
+			Type:    token.PercentSign,
+			Literal: "%",
+		},
+		token.Token{
+			Type:    token.Integer,
+			Literal: "7",
+		},
+		token.Token{
+			Type:    token.ClosingParentheses,
+			Literal: ")",
+		},
+	)
 }
