@@ -58,7 +58,6 @@ func (l *Lexer) NextToken() token.Token {
 		tokenType = token.ClosingParentheses
 		l.readChar()
 	default:
-		// tokenize integer
 		if unicode.IsDigit(l.ch) {
 			literal, tokenType = l.tokenizeNumber()
 		} else {
