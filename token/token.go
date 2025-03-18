@@ -8,9 +8,7 @@ type Token struct {
 }
 
 const (
-	Integer   Type = "INTEGER"
-	Float          = "FLOAT"
-	Unknown        = "UNKNOWN"
-	EndOfFile      = "EOF"
-	MinusSign      = "MINUS_SIGN"
+	EndOfFile Type = "EOF"
+	Illegal        = "ILLEGAL"
+	Integer        = "INTEGER"
 )
