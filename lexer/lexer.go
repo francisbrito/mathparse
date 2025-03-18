@@ -42,6 +42,12 @@ func (l *Lexer) NextToken() token.Token {
 	case '^':
 		literal = "^"
 		tokenType = token.Caret
+	case '(':
+		literal = "("
+		tokenType = token.OpeningParentheses
+	case ')':
+		literal = ")"
+		tokenType = token.ClosingParentheses
 	default:
 		// tokenize integer
 		if unicode.IsDigit(l.ch) {

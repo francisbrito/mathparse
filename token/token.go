@@ -8,14 +8,16 @@ type Token struct {
 }
 
 const (
-	Caret       Type = "CARET"
-	EndOfFile        = "EOF"
-	Float            = "FLOAT"
-	Illegal          = "ILLEGAL"
-	Integer          = "INTEGER"
-	MinusSign        = "MINUS_SIGN"
-	PercentSign      = "PERCENT_SIGN"
-	PlusSign         = "PLUS_SIGN"
-	Asterisk         = "ASTERISK"
-	Slash            = "SLASH"
+	Asterisk           Type = "ASTERISK"
+	Caret                   = "CARET"
+	ClosingParentheses      = "CLOSING_PARENTHESES"
+	EndOfFile               = "EOF"
+	Float                   = "FLOAT"
+	Illegal                 = "ILLEGAL"
+	Integer                 = "INTEGER"
+	MinusSign               = "MINUS_SIGN"
+	OpeningParentheses      = "OPENING_PARENTHESES"
+	PercentSign             = "PERCENT_SIGN"
+	PlusSign                = "PLUS_SIGN"
+	Slash                   = "SLASH"
 )

@@ -62,6 +62,9 @@ func TestLexer_NextToken(t *testing.T) {
 		// can tokenize floating point numbers
 		newTestCase("1.2", token.Token{Type: token.Float, Literal: "1.2"}),
 		newTestCase("1.2.3", token.Token{Type: token.Illegal, Literal: "1.2.3"}),
+		// can tokenize parentheses
+		newTestCase("(", token.Token{Type: token.OpeningParentheses, Literal: "("}),
+		newTestCase(")", token.Token{Type: token.ClosingParentheses, Literal: ")"}),
 	}
 	// can tokenize every digit
 	for _, digitToken := range digitTokens {
