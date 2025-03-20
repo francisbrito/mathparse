@@ -62,7 +62,11 @@ func (l *Lexer) NextToken() token.Token {
 			literal, tokenType = l.tokenizeNumber()
 		} else {
 			// any other token is considered illegal
-			literal = l.input[l.pos:]
+			start := l.pos
+			for !unicode.IsSpace(l.ch) && l.ch != 0 {
+				l.readChar()
+			}
+			literal = l.input[start:l.pos]
 			tokenType = token.Illegal
 		}
 	}

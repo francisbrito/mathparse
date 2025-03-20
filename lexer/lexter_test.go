@@ -53,7 +53,7 @@ func TestLexer_NextToken(t *testing.T) {
 		// can process empty input
 		newTestCase("", token.Token{Type: token.EndOfFile}),
 		// can process illegal input
-		newTestCase("ILLEGAL", token.Token{Type: token.Illegal, Literal: "ILLEGAL"}),
+		newTestCase("ILLEGAL", token.Token{Type: token.Illegal, Literal: "ILLEGAL"}, token.Token{Type: token.EndOfFile, Literal: ""}),
 		// can skip whitespace
 		newTestCase(" ", token.Token{Type: token.EndOfFile}),
 		newTestCase("		", token.Token{Type: token.EndOfFile}),
