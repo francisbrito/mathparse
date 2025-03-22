@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 	"mathparse/lexer"
-	"mathparse/token"
+	"mathparse/parser"
 )
 
 const Prompt = ">>>"
@@ -19,8 +19,10 @@ func Start(in io.Reader, out io.Writer) {
 			return
 		}
 		l := lexer.New(scanner.Text())
-		for tok := l.NextToken(); tok.Type != token.EndOfFile; tok = l.NextToken() {
-			fmt.Printf("%+v\n", tok)
+		p := parser.New(l)
+		expressions := p.Parse()
+		for _, expr := range expressions {
+			fmt.Print(expr.String())
 		}
 		fmt.Println()
 	}
