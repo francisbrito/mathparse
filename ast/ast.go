@@ -25,3 +25,18 @@ func (i *IntegerExpression) Literal() string {
 func (i *IntegerExpression) String() string {
 	return fmt.Sprintf("%s: %d", i.Token.Type, i.Value)
 }
+
+type FloatExpression struct {
+	Token token.Token
+	Value float64
+}
+
+func (f *FloatExpression) expression() {}
+
+func (f *FloatExpression) Literal() string {
+	return f.Token.Literal
+}
+
+func (f *FloatExpression) String() string {
+	return fmt.Sprintf("%s: %f", f.Token.Literal, f.Value)
+}
