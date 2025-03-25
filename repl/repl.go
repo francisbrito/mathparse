@@ -21,6 +21,7 @@ func Start(in io.Reader, out io.Writer) {
 		l := lexer.New(scanner.Text())
 		p := parser.New(l)
 		expressions := p.Parse()
+		// todo: fix this
 		for _, expr := range expressions {
 			fmt.Print(expr.String())
 		}
