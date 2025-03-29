@@ -21,16 +21,16 @@ func Start(in io.Reader, out io.Writer) {
 		l := lexer.New(scanner.Text())
 		p := parser.New(l)
 		expression := p.Parse()
-		for _, expr := range expression.Terms {
-			fmt.Print(expr.String())
-		}
-		if parserErrors := p.Errors(); len(parserErrors) > 0 {
-			fmt.Println()
-			for _, parserError := range parserErrors {
-				fmt.Println(parserError)
+		parseErrors := p.Errors()
+		if expression == nil {
+			if len(parseErrors) > 0 {
+				for _, parserError := range parseErrors {
+					fmt.Println(parserError)
+				}
 			}
+		} else {
+			fmt.Println(expression.String())
 		}
-		fmt.Println()
 		fmt.Println()
 	}
 }

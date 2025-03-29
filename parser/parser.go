@@ -3,77 +3,144 @@ package parser
 import (
 	"fmt"
 	"math/big"
-	"mathparse/ast"
 	"mathparse/lexer"
 	"mathparse/token"
 )
 
 type Parser struct {
 	l            *lexer.Lexer
-	currentToken token.Token
-	peekToken    token.Token
-	errors       []Error
-}
-
-func (p *Parser) Errors() []string {
-	var errorMessages []string
-	for _, e := range p.errors {
-		errorMessages = append(errorMessages, e.Error())
-	}
-	return errorMessages
-}
-
-type Error struct {
-	Token   token.Token
-	Message string
-}
-
-func (e Error) String() string {
-	return fmt.Sprintf("parse error: %s: %s", e.Token, e.Message)
-}
-
-func (e Error) Error() string {
-	return e.String()
+	currentToken *token.Token
+	peekToken    *token.Token
+	errors       []error
 }
 
 func New(l *lexer.Lexer) *Parser {
-	p := &Parser{l: l}
+	p := Parser{l: l}
 	p.nextToken()
 	p.nextToken()
-	return p
+	return &p
+}
+
+func (p *Parser) Errors() []error {
+	return p.errors
+}
+
+func (p *Parser) Parse() *Expression {
+	return p.parseExpression()
+}
+
+type ParseError struct {
+	Message string
+	Token   *token.Token
+}
+
+func (e *ParseError) String() string {
+	return fmt.Sprintf("parse error: %s", e.Message)
+}
+
+func (e *ParseError) Error() string {
+	return e.String()
 }
 
 func (p *Parser) nextToken() {
 	p.currentToken = p.peekToken
-	p.peekToken = p.l.NextToken()
+	pt := p.l.NextToken()
+	p.peekToken = &pt
 }
 
-func (p *Parser) Parse() ast.Expression {
-	var expression ast.Expression
-	for p.currentToken.Type != token.EndOfFile {
-		switch p.currentToken.Type {
-		case token.Integer:
-			expression.Terms = append(expression.Terms, p.parseInteger())
-		case token.Illegal:
-		default:
-			p.addError("illegal token")
-			break
+func (p *Parser) addParseError(msg string) {
+	p.errors = append(p.errors, &ParseError{Message: msg, Token: p.currentToken})
+}
+
+func (p *Parser) parseExpression() *Expression {
+	var expr Expression
+	switch p.currentToken.Type {
+	case token.EndOfFile:
+		return nil
+	case token.Integer:
+		expr.LeftTerm = newNumber(p.currentToken.Literal)
+		if p.peekToken.Type == token.PlusSign {
+			op := Addition
+			expr.Op = &op
+			p.nextToken()
+		} else if p.peekToken.Type == token.MinusSign {
+			op := Subtraction
+			expr.Op = &op
+			p.nextToken()
+		} else if p.peekToken.Type == token.Integer {
+			p.addParseError("invalid expression")
+			return nil
 		}
 		p.nextToken()
+		if p.currentToken.Type != token.EndOfFile {
+			expr.RightTerm = p.parseExpression()
+		}
 	}
-	if len(p.errors) > 0 {
-		expression.Terms = make([]ast.Term, 0)
-	}
-	return expression
+	return &expr
 }
 
-func (p *Parser) addError(message string) {
-	p.errors = append(p.errors, Error{Token: p.currentToken, Message: message})
+func newNumber(literal string) *Number {
+	value := new(big.Int)
+	value.SetString(literal, 0)
+	return &Number{Value: value}
 }
 
-func (p *Parser) parseInteger() ast.Term {
-	value := new(big.Float)
-	value.SetPrec(100)
-	value.SetString(p.currentToken.Literal)
-	return ast.Term{Left: ast.NewNumber(value)}
+type Expression struct {
+	Op        *TermOperation
+	LeftTerm  Atom
+	RightTerm Atom
+}
+
+type TermOperation int
+
+func (o TermOperation) String() string {
+	switch o {
+	case Addition:
+		return "+"
+	case Subtraction:
+		return "-"
+	default:
+		return fmt.Sprintf("unknown operation: %d", o)
+	}
+}
+
+const (
+	Addition TermOperation = iota + 10
+	Subtraction
+)
+
+type Atom interface {
+	Evaluate() *big.Int
+	String() string
+}
+
+func (e *Expression) Evaluate() *big.Int {
+	if e.RightTerm == nil {
+		return e.LeftTerm.Evaluate()
+	}
+	result := new(big.Int)
+	left := e.LeftTerm.Evaluate()
+	right := e.RightTerm.Evaluate()
+	if *e.Op == Addition {
+		result.Add(left, right)
+	} else if *e.Op == Subtraction {
+		result.Sub(left, right)
+	}
+	return result
+}
+
+func (e *Expression) String() string {
+	return e.Evaluate().String()
+}
+
+type Number struct {
+	Value *big.Int
+}
+
+func (n *Number) Evaluate() *big.Int {
+	return n.Value
+}
+
+func (n *Number) String() string {
+	return n.Value.String()
 }
